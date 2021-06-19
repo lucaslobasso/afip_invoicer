@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Facturador AFIP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <script defer src="../js/configurate.js"></script>
+  </head>
+  <body class="is-flex is-flex-direction-column">
+    <section id="app-header" class="hero is-small is-info">
+      <div class="hero-body">
+        <p class="title has-text-centered">Configuración</p>
+      </div>
+    </section>
+    <section id="app-body" class="section is-flex-grow-1">
+      <div class="field">
+        <label class="label">CUIT/CUIL</label>
+        <div class="control">
+            <input id="cuit" class="input" type="number">
+        </div>
+      </div>
+      <div id="upload-section" class="notification is-info is-light">
+        Arrastre o haga click aquí para seleccionar los archivos.
+      </div>
+      <article class="message">
+        <div class="message-body">
+          Para más información sobre la generación de la clave y el certificado visite la 
+          <a href="https://www.afip.gob.ar/ws/documentacion/certificados.asp" target="_blank">página de la AFIP.</a>
+        </div>
+      </article>
+      <button id="submitConfig" class="button is-success is-fullwidth" type="button">Finalizar</button>
+    </section>
+    <footer id="app-footer" class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Facturador AFIP</strong> by Lucas. Open-source code available at 
+          <a href="https://github.com/lucaslobasso" target="_blank">Github</a>.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
