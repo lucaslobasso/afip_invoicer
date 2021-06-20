@@ -25,30 +25,21 @@
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "AFIP - Facturador Simple"
-          }
+          "config": {}
         },
         {
           "name": "@electron-forge/maker-zip",
-          "config": {
-            "name": "AFIP - Facturador Simple"
-          },
           "platforms": [
             "darwin"
           ]
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {
-            "name": "afip_invoicer"
-            }
+          "config": {}
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {
-            "name": "AFIP - Facturador Simple"
-          }
+          "config": {}
         }
       ],
       "publishers": [
