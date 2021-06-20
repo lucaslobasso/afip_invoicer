@@ -1,6 +1,6 @@
 {
   "name": "afip_invoicer",
-  "productName": "Facturador Simple (AFIP)",
+  "productName": "AFIP - Facturador Simple",
   "version": "1.0.0",
   "description": "Simple facturador de la AFIP para generar facturas de tipo C a Consumidor Final.",
   "main": "src/index.js",
@@ -20,14 +20,14 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "productName": "AFIP - Facturador Simple",
+        "name": "afip_invoicer",
         "icon": "./assets/icon"
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "afip_invoicer"
-          }
+          "config": {}
         },
         {
           "name": "@electron-forge/maker-zip",
