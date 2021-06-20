@@ -2,14 +2,15 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Facturador AFIP</title>
+    <title>Facturador simple (AFIP)</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel="stylesheet" href="../index.css">
     <script defer src="../js/generate_invoice.js"></script>
   </head>
   <body class="is-flex is-flex-direction-column">
     <section id="app-header" class="hero is-small is-info">
       <div class="hero-body">
-        <p class="title has-text-centered">Facturador</p>
+        <p class="title has-text-centered">Generación de factura</p>
       </div>
     </section>
     <section id="app-body" class="section is-flex-grow-1">
@@ -21,17 +22,15 @@
         </div>
         <article class="message">
           <div class="message-body">
-            Es necesario tener un punto de venta del tipo Web Services.
+            Es necesario tener un punto de venta del tipo <em>Web Services</em>.
           </div>
         </article>
-        <button id="generateInvoice" class="button is-success is-fullwidth" type="button">Generar factura</button>
+        <button id="generateInvoice" class="button is-success is-fullwidth" type="button">Generar</button>
     </section>
     <footer id="app-footer" class="footer">
       <div class="content has-text-centered">
-        <p>
-          <strong>Facturador AFIP</strong> by Lucas. Open-source code available at 
-          <a href="https://github.com/lucaslobasso" target="_blank">Github</a>.
-        </p>
+        <p><strong>Facturador Simple (AFIP)</strong> hecho por Lucas Lobasso.</p>
+        <p>Código open-source disponible en <a href="https://github.com/lucaslobasso/afip_invoicer" target="_blank">Github</a>.</p>
       </div>
     </footer>
   </body>

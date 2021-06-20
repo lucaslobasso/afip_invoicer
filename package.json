@@ -1,8 +1,8 @@
 {
   "name": "afip_invoicer",
-  "productName": "afip_invoicer",
+  "productName": "Facturador Simple (AFIP)",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Simple facturador de la AFIP para generar facturas de tipo C a Consumidor Final.",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -13,18 +13,21 @@
   },
   "keywords": [],
   "author": {
-    "name": "Havsham",
-    "email": "havsham@users.noreply.github.com"
+    "name": "Lucas Lobasso",
+    "email": "lobassolucas@gmail.com"
   },
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "name": "Facturador Simple (AFIP)",
+        "icon": "./assets/icon"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "afip_invoicer"
+            "name": "Facturador Simple (AFIP)"
           }
         },
         {
@@ -41,6 +44,18 @@
           "name": "@electron-forge/maker-rpm",
           "config": {}
         }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "lucaslobasso",
+              "name": "afip_invoicer"
+            },
+            "draft": true
+          }
+        }
       ]
     }
   },
@@ -56,8 +71,5 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.57",
     "@electron-forge/maker-zip": "^6.0.0-beta.57",
     "electron": "13.1.2"
-  },
-  "build": {
-    "extraResources": ["./assets/**"]
   }
 }

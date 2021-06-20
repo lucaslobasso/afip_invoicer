@@ -11,7 +11,7 @@ let submit = $("#submitConfig");
 
 submit.on("click", async function () {
     let cuit = $("#cuit").val();
-
+    
     if (validateCuit(cuit) && await validateCertificates()) {
         let activeWindow = electron.getCurrentWindow();
 

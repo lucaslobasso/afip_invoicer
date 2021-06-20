@@ -3,6 +3,7 @@ const electron = require('electron').remote;
 const path = require('path');
 const Afip = require('@afipsdk/afip.js');
 const assestPath = electron.app.getPath("userData");
+const tempPath = electron.app.getPath("temp");
 
 window.$ = window.jQuery = require('jquery');
 
@@ -14,7 +15,7 @@ invoiceButton.on("click", async function() {
         afip   = new Afip({ 
             CUIT      : cuit, 
             res_folder: assestPath,
-            ta_folder : assestPath,
+            ta_folder : tempPath,
             cert      : "cert.crt", 
             key       : "key.key",
             production: true, 

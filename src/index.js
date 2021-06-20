@@ -11,8 +11,9 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 400,
-    height: 600,
+    width: 500,
+    height: 800,
+    icon: path.join(app.getAppPath(), "assets/icon.png"),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -40,12 +41,13 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, 'views/configurate.html'));
   });
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
   });
+
+  // Open the DevTools.
+  //mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
