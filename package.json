@@ -20,7 +20,6 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "productName": "AFIP - Facturador Simple",
         "name": "AFIP - Facturador Simple",
         "icon": "./assets/icon"
       },
@@ -37,7 +36,9 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "name": "afip_invoicer"
+            }
         },
         {
           "name": "@electron-forge/maker-rpm",
