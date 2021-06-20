@@ -20,14 +20,13 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "Facturador Simple (AFIP)",
         "icon": "./assets/icon"
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "Facturador Simple (AFIP)"
+            "name": "afip_invoicer"
           }
         },
         {
