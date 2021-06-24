@@ -10,18 +10,12 @@ function bindSubmitButton() {
     let btn = $("#submitConfig");
 
     btn.on("click", async function () {
-        let cuit = $("#cuit").val();
-
-        if (elemLoading(btn)) {
-            return;
-        }
-                
-        if (validateCuit(cuit) && await validateCertificates()) {
-            let activeWindow = electron.getCurrentWindow();
+        if (!elemLoading(btn) && validateCuit() && await validateCertificates()) {
+            let activeWindow = electron.getCurrentWindow(),
+                cuit = $("#cuit").val();
 
             fs.writeFile(path.join(assestPath, "cuit.txt"), cuit);
             activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
-            return;
         }
         
         elemLoading(btn, false);
@@ -101,10 +95,10 @@ function uploadFile(filePath, fileName) {
     });
 }
 
-function validateCuit(cuit) {
-    if (cuit.length !== 11) {
-        return false;
-    }
+function validateCuit() {
+    let input = $("#cuit"),
+        cuit  = input.val(),
+        valid = cuit.length === 11;
 
     var _a = cuit.split('').map(Number).reverse(), 
         checkDigit = _a[0], 
@@ -114,13 +108,20 @@ function validateCuit(cuit) {
     var mod11 = 11 - (total % 11);
     
     if (mod11 === 11) {
-        return checkDigit === 0;
+        valid = valid && checkDigit === 0;
     }
-    if (mod11 === 10) {
-        return false;
+    else if (mod11 === 10) {
+        valid = false;
+    }
+    else {
+        valid = valid && checkDigit === mod11;
     }
 
-    return checkDigit === mod11;
+    if (!valid) {
+        invalidInput(input);
+    }
+
+    return valid;
 }
 
 async function validateCertificates() {

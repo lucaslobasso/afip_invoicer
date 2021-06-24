@@ -20,6 +20,23 @@ function elemLoading(elem, loading = true) {
     return false;
 }
 
+function invalidInput(input, invalid = true) {
+    let validation = input.closest(".field").find("p.help");
+
+    if (invalid) {
+        input.addClass("is-danger");
+        validation.removeClass("is-hidden");
+    }
+    else {
+        input.removeClass("is-danger");
+        validation.addClass("is-hidden");
+    }
+
+    input.unbind("change.validation").on("change.validation", function() { 
+        invalidInput(input, false);
+    });
+}
+
 async function getCuit() {
     let cuit;
 

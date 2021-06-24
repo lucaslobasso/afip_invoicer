@@ -9,29 +9,30 @@ function bindInvoiceButton() {
     let btn = $("#generateInvoice");
 
     btn.on("click", async function() {
-        let input  = $("#amount"),
-            amount = input.val();
+        if (!elemLoading(btn) && validateAmount()) {
+            await generateInvoice();
+        }
 
-        if (elemLoading(btn)) {
-            return;
-        }
-        
-        if (validateAmount(amount)) {
-            generateInvoice(amount);
-        }
+        elemLoading(btn, false);
     })
 }
 
-function validateAmount(amount) {
+function validateAmount() {
+    let input  = $("#amount"),
+        amount = input.val();
+
     if (amount > 0 && amount < 7500) {
         return true;
     }
 
+    invalidInput(input);
     return false;
 }
 
-async function generateInvoice(amount) {
-    let cuit = await getCuit();
+async function generateInvoice() {
+    let input  = $("#amount"),
+        amount = input.val(),
+        cuit   = await getCuit();
     
     if (!cuit) {
         return;
@@ -43,10 +44,10 @@ async function generateInvoice(amount) {
         ta_folder : tempPath,
         cert      : "cert.crt", 
         key       : "key.key",
-        production: true, 
+        production: false, 
     });
 
-    afip.ElectronicBilling.getServerStatus().then(async function(status) {
+    await afip.ElectronicBilling.getServerStatus().then(async function(status) {
         if (!status || status.AppServer != "OK" || status.DbServer != "OK" || status.AuthServer != "OK") {
             console.log("Server down");
             return;
@@ -58,7 +59,7 @@ async function generateInvoice(amount) {
             return;
         }
 
-        afip.ElectronicBilling.createVoucher(data).then(res => {
+        await afip.ElectronicBilling.createVoucher(data).then(res => {
             console.log(res);
             invoiceGenerated();
         });
