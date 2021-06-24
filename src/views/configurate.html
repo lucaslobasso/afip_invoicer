@@ -3,9 +3,14 @@
   <head>
     <meta charset="UTF-8">
     <title>Croessant</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="../css/main.css">
+
     <script src="../../node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
+    <script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
+
     <script defer src="../js/main.js"></script>
     <script defer src="../js/configurate.js"></script>
   </head>
@@ -16,13 +21,15 @@
       </div>
     </section>
     <section id="app-body" class="section is-flex-grow-1">
-      <div class="field">
-        <label class="label">CUIT/CUIL</label>
-        <div class="control">
-            <input id="cuit" class="input is-loading" type="number">
+      <fieldset id="configurate-fields">
+        <div class="field">
+          <label class="label">CUIT/CUIL</label>
+          <div class="control">
+              <input id="cuit" class="input is-loading" type="number">
+          </div>
+          <p class="help is-danger is-hidden">Campo inválido.</p>
         </div>
-        <p class="help is-danger is-hidden">Campo inválido.</p>
-      </div>
+      </fieldset>
       <div id="upload-section" class="notification is-info is-light has-text-centered">
         <div class="container" style="margin-bottom: 5px;"><span class="icon"><i class="fas fa-upload"></i></span></div>
         Arrastre o haga click aquí para seleccionar los archivos.

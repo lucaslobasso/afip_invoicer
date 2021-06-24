@@ -6,14 +6,15 @@ $(document).ready(function() {
 });
 
 function bindInvoiceButton() {
-    let btn = $("#generateInvoice");
+    let btn    = $("#generateInvoice"),
+        fields = $("#invoice-fields");
 
     btn.on("click", async function() {
-        if (!elemLoading(btn) && validateAmount()) {
+        if (!submitSpinner(btn, fields) && validateAmount()) {
             await generateInvoice();
         }
 
-        elemLoading(btn, false);
+        submitSpinner(btn, fields, false);
     })
 }
 
@@ -35,6 +36,7 @@ async function generateInvoice() {
         cuit   = await getCuit();
     
     if (!cuit) {
+        errorMessage("No se encontró CUIT/CUIL. Realice la configuración nuevamente.");
         return;
     }
 
@@ -49,36 +51,36 @@ async function generateInvoice() {
 
     await afip.ElectronicBilling.getServerStatus().then(async function(status) {
         if (!status || status.AppServer != "OK" || status.DbServer != "OK" || status.AuthServer != "OK") {
-            console.log("Server down");
+            errorMessage("El servidor de la AFIP no se encuentra disponible. Intente más tarde.");
             return;
         }
     
-        let data = await getInvoiceData(afip, amount);
-    
-        if (!data) {
-            return;
+        try {
+            let data = await getInvoiceData(afip, amount);
+        
+            await afip.ElectronicBilling.createVoucher(data).then((res, err) => {
+                if (err) {
+                    errorMessage(err);
+                    return;
+                }
+                
+                invoiceGenerated(res['CAE']);
+            });
+        } catch (e) {
+            errorMessage(e);
         }
-
-        await afip.ElectronicBilling.createVoucher(data).then(res => {
-            console.log(res);
-            invoiceGenerated();
-        });
     });
 }
 
 async function getInvoiceData(afip, amount) {
-    let data;
-
-    try {
-        let invoiceType = 11, // Factura C
-            salePoints  = await afip.ElectronicBilling.getSalesPoints(),
-            salePointNo = salePoints[0].Nro,
-            lastVoucher = await afip.ElectronicBilling.getLastVoucher(salePointNo, invoiceType),
-            currVoucher = lastVoucher + 1,
-            dateNow     = new Date(Date.now() - ((new Date()).getTimezoneOffset() * 60000)).toISOString().split('T')[0],
-            dateParsed  = parseInt(dateNow.replace(/-/g, ''));
-
-        data = {
+    let invoiceType = 11, // Factura C
+        salePoints  = await afip.ElectronicBilling.getSalesPoints(),
+        salePointNo = salePoints[0].Nro,
+        lastVoucher = await afip.ElectronicBilling.getLastVoucher(salePointNo, invoiceType),
+        currVoucher = lastVoucher + 1,
+        dateNow     = new Date(Date.now() - ((new Date()).getTimezoneOffset() * 60000)).toISOString().split('T')[0],
+        dateParsed  = parseInt(dateNow.replace(/-/g, '')),
+        data        = {
             'CantReg' 		: 1,            // Cantidad de comprobantes a registrar
             'PtoVta' 		: salePointNo,  // Punto de venta
             'CbteTipo' 		: invoiceType,  // Tipo de comprobante (11 Factura C)
@@ -100,17 +102,15 @@ async function getInvoiceData(afip, amount) {
             'MonId' 		: 'PES',        // Tipo de moneda usada en el comprobante ('PES' para pesos argentinos) 
             'MonCotiz' 		: 1,            // Cotización de la moneda usada (1 para pesos argentinos)  
         };
-    } catch (e) {
-        console.log(e);
-    }
 
     return data;
 }
 
-function invoiceGenerated() {
+function invoiceGenerated(cae) {
     let input = $("#amount"),
         btn   = $("#generateInvoice");
 
     input.val("");
     elemLoading(btn, false);
+    successMessage(`Factura generada correctamente. CAE: ${cae}.`);
 }

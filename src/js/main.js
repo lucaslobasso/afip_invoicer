@@ -1,20 +1,40 @@
-const { promises: fs }  = require('fs');
-const electron          = require('@electron/remote');
-const path              = require('path');
-const assestPath        = electron.app.getPath("userData");
+const { promises: fs, constants } = require('fs');
+const electron   = require('@electron/remote');
+const path       = require('path');
+const assestPath = electron.app.getPath("userData");
 
 window.$ = window.jQuery = require('jquery');
 
-function elemLoading(elem, loading = true) {
+bulmaToast.setDefaults({
+    type: 'is-danger',
+    duration: 3000,
+    pauseOnHover: true,
+    dismissible: true,
+    closeOnClick: false,
+    animate: { in: 'fadeIn', out: 'fadeOut' }
+});
+
+function successMessage(msg) {
+    bulmaToast.toast({ message: msg.toString(), type: 'is-success' });
+}
+
+function errorMessage(msg) {
+    bulmaToast.toast({ message: msg.toString() });
+    console.log(msg);
+}
+
+function submitSpinner(btn, fields, loading = true) {
     if (loading) {
-        if (elem.hasClass("is-loading")) {
+        if (btn.hasClass("is-loading")) {
             return true;
         }
 
-        elem.addClass("is-loading");
+        fields.attr("disabled", "");
+        btn.addClass("is-loading");
     }
     else {
-        elem.removeClass("is-loading");
+        fields.removeAttr("disabled");
+        btn.removeClass("is-loading");
     }
 
     return false;
@@ -40,11 +60,11 @@ function invalidInput(input, invalid = true) {
 async function getCuit() {
     let cuit;
 
-    try {
-        cuit = await fs.readFile(path.join(assestPath, "cuit.txt"), { encoding: "utf8" });
-    } catch (e) {
-        console.log(e);
-    }
+    await fs.readFile(path.join(assestPath, "cuit.txt"), (err, data) => {
+        if (!err) {
+            cuit = data;
+        }
+    });
 
     return cuit;
 }

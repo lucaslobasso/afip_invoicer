@@ -7,10 +7,11 @@ $(document).ready(function() {
 });
 
 function bindSubmitButton() {
-    let btn = $("#submitConfig");
+    let btn    = $("#submitConfig"),
+        fields = $("#configurate-fields");
 
     btn.on("click", async function () {
-        if (!elemLoading(btn) && validateCuit() && await validateCertificates()) {
+        if (!submitSpinner(btn, fields) && validateCuit() && await validateCertificates()) {
             let activeWindow = electron.getCurrentWindow(),
                 cuit = $("#cuit").val();
 
@@ -18,7 +19,7 @@ function bindSubmitButton() {
             activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
         }
         
-        elemLoading(btn, false);
+        submitSpinner(btn, fields, false);
     });
 }
 
@@ -88,7 +89,7 @@ function uploadFile(filePath, fileName) {
     
     fs.copyFile(filePath, path.join(assestPath, fileName)).then(err => {
         if (err) {
-            console.log(err);
+            errorMessage("Se produjo un error al subir el/los archivo/s.");
         }
         
         submitBtn.removeClass("is-loading");
@@ -125,12 +126,20 @@ function validateCuit() {
 }
 
 async function validateCertificates() {
-    try {
-        await fs.access(path.join(assestPath, 'cert.crt'));
-        await fs.access(path.join(assestPath, 'key.key'));
-        return true;
-    } catch (e) {
-        console.log(e);
-        return false;
-    }
+    let valid = true;
+
+    await fs.access(path.join(assestPath, 'cert.crt'), constants.F_OK, (err) => {
+        if (err) {
+            valid = false;
+            errorMessage("No se encuentra el certificado.");
+        }
+    });
+    await fs.access(path.join(assestPath, 'key.key'), constants.F_OK, (err) => {
+        if (err) {
+            valid = false;
+            errorMessage("No se encuentra la key.");
+        }
+    });
+
+    return valid;
 }
