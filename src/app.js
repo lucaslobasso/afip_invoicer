@@ -1,7 +1,9 @@
 const { app, shell, BrowserWindow } = require('electron');
-const { promises: fs } = require('fs');
-const path = require('path');
-const assestPath = app.getPath("userData");
+const { promises: fs }              = require('fs');
+const path                          = require('path');
+const assestPath                    = app.getPath("userData");
+
+require('@electron/remote/main').initialize();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -47,7 +49,7 @@ const createWindow = () => {
   });
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished

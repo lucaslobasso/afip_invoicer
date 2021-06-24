@@ -3,7 +3,7 @@
   "productName": "Croessant",
   "version": "1.1.4",
   "description": "Un simple facturador de la AFIP para generar facturas C a consumidor final.",
-  "main": "src/main.js",
+  "main": "src/app.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@afipsdk/afip.js": "git+https://github.com/afipsdk/afip.js.git",
+    "@electron/remote": "^1.2.0",
     "electron-squirrel-startup": "^1.0.0",
     "jquery": "^3.6.0"
   },

@@ -1,87 +1,104 @@
-const { promises: fs } = require('fs');
-const electron = require('electron').remote;
-const path = require('path');
-const assestPath = electron.app.getPath("userData");
 const extensions = ['crt', 'key'];
 
-window.$ = window.jQuery = require('jquery');
-
-// Submit
-let submit = $("#submitConfig");
-
-submit.on("click", async function () {
-    let cuit = $("#cuit").val();
-    
-    if (validateCuit(cuit) && await validateCertificates()) {
-        let activeWindow = electron.getCurrentWindow();
-
-        fs.writeFile(path.join(assestPath, "cuit.txt"), cuit);
-        activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
-    }
+$(document).ready(function() {
+    bindSubmitButton();
+    bindUploadSection();
+    loadCuit();
 });
 
-// Upload section
-let uploadSection = document.getElementById("upload-section");
+function bindSubmitButton() {
+    let btn = $("#submitConfig");
 
-uploadSection.addEventListener('click', () => {
-    electron.dialog.showOpenDialog({
-        title: 'Select the File to be uploaded',
-        buttonLabel: 'Upload',
-        properties: ['openFile','multiSelections'],
-        filters: [
-            { name: "Certificate & key", extensions: extensions }, 
-        ]
-    }).then(file => {
-        if (!file.canceled) {
-            for (const path of file.filePaths) {
-                uploadFile(path, getFileName(path));
+    btn.on("click", async function () {
+        let cuit = $("#cuit").val();
+
+        if (elemLoading(btn)) {
+            return;
+        }
+                
+        if (validateCuit(cuit) && await validateCertificates()) {
+            let activeWindow = electron.getCurrentWindow();
+
+            fs.writeFile(path.join(assestPath, "cuit.txt"), cuit);
+            activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
+            return;
+        }
+        
+        elemLoading(btn, false);
+    });
+}
+
+function bindUploadSection() {
+    let uploadSection = document.getElementById("upload-section");
+
+    uploadSection.addEventListener('click', () => {
+        electron.dialog.showOpenDialog({
+            title: 'Select the File to be uploaded',
+            buttonLabel: 'Upload',
+            properties: ['openFile','multiSelections'],
+            filters: [
+                { name: "Certificate & key", extensions: extensions }, 
+            ]
+        }).then(file => {
+            if (!file.canceled) {
+                for (const path of file.filePaths) {
+                    uploadFile(path, getFileName(path));
+                }
+            }  
+        }).catch(err => { 
+            console.log(err); 
+        });
+    });
+
+    uploadSection.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadSection.classList.add("is-light");
+
+        for (const file of e.dataTransfer.files) {
+            if (extensions.includes(getFileExtension(file.name))) {
+                uploadFile(file.path, file.name);
             }
-        }  
-    }).catch(err => { 
-        console.log(err); 
-    });
-});
-
-uploadSection.addEventListener('drop', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    uploadSection.classList.add("is-light");
-
-    for (const file of e.dataTransfer.files) {
-        if (extensions.includes(getFileExtension(file.name))) {
-            uploadFile(file.path, file.name);
         }
+    });
+    
+    uploadSection.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    uploadSection.addEventListener('dragenter', (e) => {
+        uploadSection.classList.remove("is-light");
+    });
+    
+    uploadSection.addEventListener('dragleave', (e) => {
+        uploadSection.classList.add("is-light");
+    });
+}
+
+async function loadCuit() {
+    let input = $("#cuit"),
+        cuit  = await getCuit();
+        
+    if (cuit) {
+        input.val(cuit);
     }
-});
-  
-uploadSection.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-});
 
-uploadSection.addEventListener('dragenter', (e) => {
-    uploadSection.classList.remove("is-light");
-});
-  
-uploadSection.addEventListener('dragleave', (e) => {
-    uploadSection.classList.add("is-light");
-});
+    input.removeClass("is-loading");
+}
 
-// Aux functions
 function uploadFile(filePath, fileName) {
-    fs.copyFile(filePath, path.join(assestPath, fileName)).catch((err) => {
+    let submitBtn = $("#submitConfig");
+
+    submitBtn.addClass("is-loading");
+    
+    fs.copyFile(filePath, path.join(assestPath, fileName)).then(err => {
         if (err) {
-            console.error(err);
+            console.log(err);
         }
+        
+        submitBtn.removeClass("is-loading");
     });
-}
-
-function getFileName(filePath) {
-    return filePath.replace(/^.*[\\\/]/, '');
-}
-
-function getFileExtension(fileName) {
-    return fileName.split('.').pop();
 }
 
 function validateCuit(cuit) {

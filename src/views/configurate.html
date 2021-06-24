@@ -5,6 +5,7 @@
     <title>Croessant</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <link rel="stylesheet" href="../css/main.css">
+    <script defer src="../js/main.js"></script>
     <script defer src="../js/configurate.js"></script>
   </head>
   <body class="is-flex is-flex-direction-column">
@@ -17,7 +18,7 @@
       <div class="field">
         <label class="label">CUIT/CUIL</label>
         <div class="control">
-            <input id="cuit" class="input" type="number">
+            <input id="cuit" class="input is-loading" type="number">
         </div>
       </div>
       <div id="upload-section" class="notification is-info is-light">
