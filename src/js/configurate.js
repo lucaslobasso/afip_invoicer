@@ -15,8 +15,14 @@ function bindSubmitButton() {
             let activeWindow = electron.getCurrentWindow(),
                 cuit = $("#cuit").val();
 
-            fs.writeFile(path.join(assestPath, "cuit.txt"), cuit);
-            activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
+            await fs.writeFile(path.join(assestPath, "cuit.txt"), cuit, (err) => {
+                if (err) {
+                    errorMessage("Se produjo un error al guardar el CUIT/CUIL.");
+                    return;
+                }
+
+                activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
+            });
         }
         
         submitSpinner(btn, fields, false);
@@ -130,14 +136,14 @@ async function validateCertificates() {
 
     await fs.access(path.join(assestPath, 'cert.crt'), constants.F_OK, (err) => {
         if (err) {
-            valid = false;
             errorMessage("No se encuentra el certificado.");
+            valid = false;
         }
     });
     await fs.access(path.join(assestPath, 'key.key'), constants.F_OK, (err) => {
         if (err) {
-            valid = false;
             errorMessage("No se encuentra la key.");
+            valid = false;
         }
     });
 

@@ -60,7 +60,7 @@ async function generateInvoice() {
         
             await afip.ElectronicBilling.createVoucher(data).then((res, err) => {
                 if (err) {
-                    errorMessage(err);
+                    errorMessage("Se produjo un error al generar la factura.");
                     return;
                 }
                 
