@@ -1,7 +1,7 @@
 {
   "name": "Croessant",
   "productName": "Croessant",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Un simple facturador de la AFIP para generar facturas C a consumidor final.",
   "main": "src/app.js",
   "scripts": {
