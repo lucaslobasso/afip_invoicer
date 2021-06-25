@@ -124,7 +124,7 @@ async function getAfipUser() {
             ta_folder : tempPath,
             cert      : "cert.crt", 
             key       : "key.key",
-            production: false
+            production: true
         });
 
     return cuit ? data : null;
