@@ -23,17 +23,25 @@ function errorMessage(msg) {
     console.log(msg);
 }
 
+function infoMessage(msg) {
+    bulmaToast.toast({ message: msg.toString(), type: 'is-info' });
+}
+
 function submitSpinner(btn, fields, loading = true) {
     if (loading) {
         if (btn.hasClass("is-loading")) {
             return true;
         }
 
-        fields.attr("disabled", "");
+        if (fields) {
+            fields.attr("disabled", "");
+        }
         btn.addClass("is-loading");
     }
     else {
-        fields.removeAttr("disabled");
+        if (fields) {
+            fields.removeAttr("disabled");
+        }
         btn.removeClass("is-loading");
     }
 
@@ -60,7 +68,7 @@ function invalidInput(input, invalid = true) {
 async function getCuit() {
     let cuit;
 
-    await fs.readFile(path.join(assestPath, "cuit.txt"), (err, data) => {
+    await fs.readFile(path.join(assestPath, "cuit.txt"), "utf-8").then((data, err) => {
         if (!err) {
             cuit = data;
         }

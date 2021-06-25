@@ -1,8 +1,30 @@
-const Afip      = require('@afipsdk/afip.js');
-const tempPath  = electron.app.getPath("temp");
+const Afip          = require('@afipsdk/afip.js');
+const activeWindow  = electron.getCurrentWindow();
+const tempPath      = electron.app.getPath("temp");
+let afip;
 
-$(document).ready(function() {
-    bindInvoiceButton();
+$(document).ready(async function() {
+    let btn    = $("#generateInvoice"),
+        fields = $("#invoice-fields");
+
+    infoMessage("Conectando con AFIP...");
+    submitSpinner(btn, fields);
+    afip = await getAfipUser();
+
+    if (!afip) {
+        configurationError();
+    }
+    else if (!await isServerOnline()) {
+        connectionError();
+    }
+    else if (!await isAuthenticated()) {
+        configurationError();
+    } 
+    else {
+        bindInvoiceButton();
+        submitSpinner(btn, fields, false);
+        successMessage("Conectado");
+    }
 });
 
 function bindInvoiceButton() {
@@ -31,48 +53,27 @@ function validateAmount() {
 }
 
 async function generateInvoice() {
-    let input  = $("#amount"),
-        amount = input.val(),
-        cuit   = await getCuit();
-    
-    if (!cuit) {
-        errorMessage("No se encontró CUIT/CUIL. Realice la configuración nuevamente.");
-        return;
+    if (!await isServerOnline()) {
+        errorMessage("El servidor de la AFIP no se encuentra disponible. Intente nuevamente más tarde.");
     }
 
-    let afip = new Afip({ 
-        CUIT      : cuit, 
-        res_folder: assestPath,
-        ta_folder : tempPath,
-        cert      : "cert.crt", 
-        key       : "key.key",
-        production: false, 
-    });
-
-    await afip.ElectronicBilling.getServerStatus().then(async function(status) {
-        if (!status || status.AppServer != "OK" || status.DbServer != "OK" || status.AuthServer != "OK") {
-            errorMessage("El servidor de la AFIP no se encuentra disponible. Intente más tarde.");
-            return;
-        }
+    try {
+        let data = await getInvoiceData(amount);
     
-        try {
-            let data = await getInvoiceData(afip, amount);
-        
-            await afip.ElectronicBilling.createVoucher(data).then((res, err) => {
-                if (err) {
-                    errorMessage("Se produjo un error al generar la factura.");
-                    return;
-                }
-                
-                invoiceGenerated(res['CAE']);
-            });
-        } catch (e) {
-            errorMessage(e);
-        }
-    });
+        await afip.ElectronicBilling.createVoucher(data).then((data, err) => {
+            if (err) {
+                errorMessage("Se produjo un error al generar la factura.");
+                return;
+            }
+            
+            invoiceGenerated(data['CAE']);
+        });
+    } catch (e) {
+        errorMessage(e);
+    }
 }
 
-async function getInvoiceData(afip, amount) {
+async function getInvoiceData(amount) {
     let invoiceType = 11, // Factura C
         salePoints  = await afip.ElectronicBilling.getSalesPoints(),
         salePointNo = salePoints[0].Nro,
@@ -113,4 +114,47 @@ function invoiceGenerated(cae) {
     input.val("");
     elemLoading(btn, false);
     successMessage(`Factura generada correctamente. CAE: ${cae}.`);
+}
+
+async function getAfipUser() {
+    let cuit = await getCuit(),
+        data = new Afip({ 
+            CUIT      : cuit, 
+            res_folder: assestPath,
+            ta_folder : tempPath,
+            cert      : "cert.crt", 
+            key       : "key.key",
+            production: false
+        });
+
+    return cuit ? data : null;
+}
+
+async function isServerOnline() {
+    return await afip.ElectronicBilling.getServerStatus().then(async function(status) {
+        console.log(status)
+        if (!status || status.AppServer != "OK" || status.DbServer != "OK" || status.AuthServer != "OK") {
+            return false;
+        }
+        
+        return true;
+    }).catch(_ => false);
+}
+
+async function isAuthenticated() {
+    return await afip.ElectronicBilling.getWSInitialRequest().then(async function(data) {
+        if (!data || !data.Auth || !data.Auth.Cuit) {
+            return false;
+        }
+        
+        return true;
+    }).catch(_ => false);
+}
+
+function configurationError() {
+    activeWindow.loadFile(path.join(__dirname, 'error/configuration_error.html'));
+}
+
+function connectionError() {
+    activeWindow.loadFile(path.join(__dirname, 'error/connection_error.html'));
 }

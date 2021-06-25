@@ -1,7 +1,8 @@
 const { app, shell, BrowserWindow } = require('electron');
-const { promises: fs }              = require('fs');
+const { promises: fs, constants }   = require('fs');
 const path                          = require('path');
 const assestPath                    = app.getPath("userData");
+const viewsPath                     = path.join(__dirname, 'views');
 
 require('@electron/remote/main').initialize();
 
@@ -10,7 +11,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = async () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 500,
@@ -23,25 +24,11 @@ const createWindow = () => {
     }
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-  fs.access(path.join(assestPath, 'cert.crt'), (error) => {
-    if (!error) {
-      fs.access(path.join(assestPath, 'key.key'), (error) => {
-        if (!error) {
-          fs.access(path.join(assestPath, 'cuit.txt'), (error) => {
-            if (!error) {
-              mainWindow.loadFile(path.join(__dirname, 'views/generate_invoice.html'));
-              return;
-            }
-          });
-        }
-      });
-    }
-    
-    mainWindow.loadFile(path.join(__dirname, 'views/configurate.html'));
-  });
+  if (await configurated()) {
+    mainWindow.loadFile(path.join(viewsPath, 'generate_invoice.html'));
+  } else {
+    mainWindow.loadFile(path.join(viewsPath, 'configurate.html'));
+  }
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
@@ -73,3 +60,14 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+async function configurated() {
+  try {
+    await fs.access(path.join(assestPath, 'cert.crt'), constants.R_OK);
+    await fs.access(path.join(assestPath, 'key.key'), constants.R_OK);
+    await fs.access(path.join(assestPath, 'cuit.txt'), constants.R_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

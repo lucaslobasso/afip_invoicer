@@ -10,7 +10,7 @@
 
     <script src="../../node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
     <script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
-    
+
     <script defer src="../js/main.js"></script>
     <script defer src="../js/generate_invoice.js"></script>
   </head>
@@ -21,7 +21,7 @@
       </div>
     </section>
     <section id="app-body" class="section is-flex-grow-1">
-        <fieldset id="invoice-fields">
+        <fieldset id="invoice-fields" disabled>
           <div class="field">
             <label class="label">Monto</label>
             <div class="control">
@@ -35,7 +35,7 @@
             Es necesario tener un punto de venta del tipo <em>Web Services</em>.
           </div>
         </article>
-        <button id="generateInvoice" class="button is-success is-fullwidth" type="button">Generar</button>
+        <button id="generateInvoice" class="button is-success is-loading is-fullwidth" type="button">Generar</button>
     </section>
     <footer id="app-footer" class="footer">
       <div class="content has-text-centered">

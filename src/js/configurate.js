@@ -1,9 +1,10 @@
-const extensions = ['crt', 'key'];
+const extensions    = ['crt', 'key'];
+const activeWindow  = electron.getCurrentWindow();
 
 $(document).ready(function() {
+    loadCuit();
     bindSubmitButton();
     bindUploadSection();
-    loadCuit();
 });
 
 function bindSubmitButton() {
@@ -11,18 +12,8 @@ function bindSubmitButton() {
         fields = $("#configurate-fields");
 
     btn.on("click", async function () {
-        if (!submitSpinner(btn, fields) && validateCuit() && await validateCertificates()) {
-            let activeWindow = electron.getCurrentWindow(),
-                cuit = $("#cuit").val();
-
-            await fs.writeFile(path.join(assestPath, "cuit.txt"), cuit, (err) => {
-                if (err) {
-                    errorMessage("Se produjo un error al guardar el CUIT/CUIL.");
-                    return;
-                }
-
-                activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
-            });
+        if (!submitSpinner(btn, fields) && validateCuit() && await validateFiles()) {
+            activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
         }
         
         submitSpinner(btn, fields, false);
@@ -93,7 +84,7 @@ function uploadFile(filePath, fileName) {
 
     submitBtn.addClass("is-loading");
     
-    fs.copyFile(filePath, path.join(assestPath, fileName)).then(err => {
+    fs.copyFile(filePath, path.join(assestPath, fileName)).then((_, err) => {
         if (err) {
             errorMessage("Se produjo un error al subir el/los archivo/s.");
         }
@@ -131,20 +122,21 @@ function validateCuit() {
     return valid;
 }
 
-async function validateCertificates() {
-    let valid = true;
+async function validateFiles() {
+    let cuit  = $("#cuit").val(),
+        valid = true;
 
-    await fs.access(path.join(assestPath, 'cert.crt'), constants.F_OK, (err) => {
-        if (err) {
-            errorMessage("No se encuentra el certificado.");
-            valid = false;
-        }
+    await fs.writeFile(path.join(assestPath, "cuit.txt"), cuit).catch((_) => {
+        errorMessage("Se produjo un error al guardar el CUIT/CUIL.");
+        valid = false;
     });
-    await fs.access(path.join(assestPath, 'key.key'), constants.F_OK, (err) => {
-        if (err) {
-            errorMessage("No se encuentra la key.");
-            valid = false;
-        }
+    await fs.access(path.join(assestPath, 'cert.crt'), constants.R_OK).catch((_) => {
+        errorMessage("No se encuentra el certificado.");
+        valid = false;
+    });
+    await fs.access(path.join(assestPath, 'key.key'), constants.R_OK).catch((_) => {
+        errorMessage("No se encuentra la key.");
+        valid = false;
     });
 
     return valid;
