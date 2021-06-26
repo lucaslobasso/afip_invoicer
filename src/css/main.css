@@ -9,3 +9,22 @@ body {
 fieldset {
   margin-bottom: 20px;
 }
+
+.select {
+  width: 100%;
+}
+.select > select {
+  width: 100%;
+}
+
+.is-expanded {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.field.is-grouped > .field {
+  margin: 0;
+}
+.field.is-grouped > .field:not(:last-child) {
+  margin-right: 20px;
+}

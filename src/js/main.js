@@ -65,6 +65,30 @@ function invalidInput(input, invalid = true) {
     });
 }
 
+function generateDatePicker(elem, minDate) {
+    let concept = $("#concept").val();
+
+    return new Datepicker(elem[0], {
+        autohide        : true,
+        todayHighlight  : true,
+        minDate         : minDate,
+        maxDate         : new Date(new Date().setDate(concept > 1 ? new Date().getDate() + 10 : new Date().getDate() + 5)),
+        language        : "es"
+    });
+}
+
+function getDate(date) {
+    try {
+        let splitted = date.split("/"),
+            parsed   = new Date(splitted[2], splitted[1] - 1, splitted[0]);
+
+        return parsed;
+    } 
+    catch (e) {
+        return null;
+    }
+}
+
 async function getCuit() {
     let cuit;
 

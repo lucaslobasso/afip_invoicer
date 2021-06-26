@@ -12,7 +12,7 @@ function bindSubmitButton() {
         fields = $("#configurate-fields");
 
     btn.on("click", async function () {
-        if (!submitSpinner(btn, fields) && validateCuit() && await validateFiles()) {
+        if (!submitSpinner(btn, fields) && await validateForm()) {
             activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
         }
         
@@ -91,6 +91,10 @@ function uploadFile(filePath, fileName) {
         
         submitBtn.removeClass("is-loading");
     });
+}
+
+async function validateForm() {
+    return validateCuit() && await validateFiles();
 }
 
 function validateCuit() {
