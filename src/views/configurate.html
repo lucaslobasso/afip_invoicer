@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Croessant</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="../css/main.css">
 
@@ -15,13 +14,13 @@
     <script defer src="../js/configurate.js"></script>
   </head>
   <body class="is-flex is-flex-direction-column">
-    <section id="app-header" class="hero is-small is-info">
+    <section id="app-header" class="hero is-primary">
       <div class="hero-body">
         <p class="title has-text-centered">Configuración</p>
       </div>
     </section>
-    <section id="app-body" class="section is-flex-grow-1">
-      <fieldset id="configurate-fields">
+    <section id="app-body" class="section is-flex is-flex-direction-column is-flex-grow-1">
+      <fieldset id="configurate-fields" class="is-flex-grow-1">
         <div class="field">
           <label class="label">CUIT/CUIL</label>
           <div class="control">
@@ -29,17 +28,17 @@
           </div>
           <p class="help is-danger is-hidden">Campo inválido.</p>
         </div>
-      </fieldset>
-      <div id="upload-section" class="notification is-info is-light has-text-centered">
-        <div class="container mb-2"><span class="icon has-text-info"><i class="fas fa-upload"></i></span></div>
-        Arrastre o haga click aquí para seleccionar los archivos.
-      </div>
-      <article class="message">
-        <div class="message-body">
-          Para más información sobre la generación de la clave y el certificado visite la 
-          <a href="https://www.afip.gob.ar/ws/documentacion/certificados.asp" target="_blank">página de la AFIP.</a>
+        <div id="upload-section" class="notification is-info is-light has-text-centered">
+          <div class="container mb-2"><span class="icon has-text-info"><i class="fas fa-upload"></i></span></div>
+          Arrastre o haga click aquí para seleccionar los archivos.
         </div>
-      </article>
+        <article class="message">
+          <div class="message-body">
+            Para más información sobre la generación de la clave y el certificado visite la 
+            <a href="https://www.afip.gob.ar/ws/documentacion/certificados.asp" target="_blank">página de la AFIP.</a>
+          </div>
+        </article>
+      </fieldset>
       <button id="submitConfig" class="button is-medium is-success is-fullwidth" type="button">Finalizar</button>
     </section>
     <footer id="app-footer" class="footer">

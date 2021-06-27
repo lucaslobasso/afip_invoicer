@@ -5,7 +5,10 @@
   "description": "Un simple facturador de la AFIP para generar facturas C a consumidor final.",
   "main": "src/app.js",
   "scripts": {
-    "start": "electron-forge start",
+    "css-start": "node-sass --omit-source-map-url src/scss/main.scss src/css/main.css",
+    "css-watch": "npm run css-start -- --watch",
+    "electron-start": "electron-forge start",
+    "start": "run-p css-start electron-start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -72,6 +75,9 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.57",
     "@electron-forge/maker-zip": "^6.0.0-beta.57",
     "@electron-forge/publisher-github": "^6.0.0-beta.57",
-    "electron": "13.1.2"
+    "bulma": "^0.9.3",
+    "electron": "13.1.2",
+    "node-sass": "^6.0.1",
+    "npm-run-all": "^4.1.5"
   }
 }

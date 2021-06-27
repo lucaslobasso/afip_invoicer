@@ -4,16 +4,17 @@ $(document).ready(async function() {
         fields = $("#invoice-fields");
 
     submitSpinner(btn, fields);
-    infoMessage("Conectando con AFIP...");
+    //infoMessage("Conectando con AFIP...");
 
     await initAfip();
 
     bindInvoiceButton();
     bindDatePicker();
-    updateDatePicker();
+    updateDatePicker().setDate(new Date(Date.now()));
 
     submitSpinner(btn, fields, false);
-    successMessage("Conectado!");
+    $(".pageloader").removeClass("is-active");
+    //successMessage("Conectado!");
 });
 
 function bindInvoiceButton() {
@@ -48,14 +49,12 @@ function updateDatePicker() {
     if (oldPicker.length) {
         oldPicker.remove();
     }
-
+    
     if (lastInvoiceDate && lastInvoiceDate > minDate) {
         minDate = lastInvoiceDate;
     }
 
-    let datePicker = generateDatePicker(date, minDate);
-
-    datePicker.setDate(new Date(Date.now()));
+    return generateDatePicker(date, minDate);
 }
 
 function validateForm() {
