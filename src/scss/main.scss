@@ -1,0 +1,79 @@
+@import "./variables";
+
+html {
+    height: 100%;
+    overflow: auto;
+
+  body {
+    height: 100%;
+
+    &.warning {
+        background-color: $warning-dark;
+    }
+    &.error {
+        background-color: $danger-dark;
+    }
+
+    section.hero .hero-body {
+        padding: 40px 20px;
+
+        .title {
+            color: white;
+        }
+    }
+    section.section {
+        background-color: white;
+        padding: 35px 30px;
+        border-radius: 15px 15px 0 0;
+    }
+    fieldset {
+        margin-bottom: 20px;
+    }
+    footer.footer {
+        padding: 30px;
+
+        .content > p {
+            margin-bottom: 5px;
+        }
+    }
+        
+    .select {
+        width: 100%;
+
+        > select {
+            width: 100%;
+        }
+    }
+    
+    .is-expanded {
+        flex-grow: 1;
+        flex-shrink: 1;
+    }
+    
+    .field.is-grouped > .field {
+        margin: 0;
+
+        &:not(:last-child) {
+            margin-right: 20px;
+        }
+    }
+
+    button.is-warning {
+        color: white;
+    }
+
+    .datepicker-cell {
+        &.selected, 
+        &.selected:hover {
+            background-color: $secondary;
+        }
+        &.today:not(.selected) {
+            background-color: $primary;
+        }
+    }
+
+    .pageloader {
+        background: $secondary;
+    }
+  }
+}

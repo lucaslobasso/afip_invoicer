@@ -1,0 +1,21 @@
+@charset "utf-8";
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+
+$primary: #2e4165;
+$secondary: #649ce6;
+
+$success: #53c583;
+$info: $secondary;
+$warning: #ff973e;
+$warning-dark: #d67e40;
+$danger: #d84242;
+$danger-dark: #a93838;
+
+$family-sans-serif: "Lato", sans-serif;
+$body-background-color: $primary;
+$input-border-color: #ececec;
+$link: $secondary;
+$link-hover: $primary;
+
+@import "../../node_modules/bulma/bulma.sass";
+@import "../../node_modules/bulma-pageloader/src/sass/index.sass";
