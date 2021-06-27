@@ -4,17 +4,14 @@ $(document).ready(async function() {
         fields = $("#invoice-fields");
 
     submitSpinner(btn, fields);
-    //infoMessage("Conectando con AFIP...");
 
     await initAfip();
 
     bindInvoiceButton();
     bindDatePicker();
     updateDatePicker().setDate(new Date(Date.now()));
-
     submitSpinner(btn, fields, false);
     $(".pageloader").removeClass("is-active");
-    //successMessage("Conectado!");
 });
 
 function bindInvoiceButton() {
