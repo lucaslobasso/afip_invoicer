@@ -13,20 +13,20 @@
     <script defer src="../../js/main.js"></script>
     <script defer src="../../js/error.js"></script>
   </head>
-  <body class="is-flex is-flex-direction-column warning">
-    <section id="app-header" class="hero is-small is-warning-dark">
+  <body class="is-flex is-flex-direction-column error">
+    <section id="app-header" class="hero is-danger-dark">
       <div class="hero-body">
         <p class="title has-text-centered">Error</p>
       </div>
     </section>
     <section id="app-body" class="section is-flex is-flex-direction-column is-flex-grow-1">
         <div class="container has-text-centered is-flex is-flex-direction-column is-flex-grow-1 is-justify-content-center is-align-items-center">
-          <span class="icon is-large has-text-warning"><i class="fas fa-exclamation-triangle" style="font-size: 80px;"></i></span>
+          <span class="icon is-large has-text-danger"><i class="fas fa-exclamation-triangle" style="font-size: 80px;"></i></span>
           <p class="mt-6">No se encontraron puntos de venta disponibles.</p>
-          <p>Asegúrese de tener al menos un punto de venta del tipo Web Service habilitado y vuelva a intentarlo.</p>
+          <p>Asegúrese de tener al menos un punto de venta del tipo <b>Web Service</b> habilitado y vuelva a intentarlo.</p>
         </div>
       
-        <button id="retryConnection" class="button is-medium is-warning is-fullwidth" type="button">Reintentar</button>
+        <button class="button is-medium is-danger is-fullwidth" onclick="retryConnection();" type="button">Reintentar</button>
     </section>
     <footer id="app-footer" class="footer">
       <div class="content has-text-centered">

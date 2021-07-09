@@ -14,10 +14,44 @@ html {
         background-color: $danger-dark;
     }
 
-    section.hero .hero-body {
-        padding: 40px 20px;
+    section.hero {
+        .hero-head {
+            .navbar, .navbar-menu, .navbar-end {
+                align-items: stretch;
+                display: flex;
+            }
+            .navbar {
+                justify-content: space-between;
+            }
+            .navbar-brand > .navbar-item {
+                cursor: default;
+                background-color: transparent;
 
-        .title {
+                span {
+                    padding-left: 5px;
+                    font-weight: bold;
+                }
+            }
+            .navbar-menu {
+                box-shadow: none;
+            }
+            .navbar-end {
+                justify-content: flex-end;
+                margin-left: auto;
+
+                .button:last-child {
+                    margin-left: 5px;
+                }
+            }
+            .buttons.are-small .button:not(.is-normal):not(.is-medium):not(.is-large) {
+                font-size: 0.85em;
+            }
+        }
+
+        .hero-head + .hero-body {
+            padding: 20px 20px 50px 20px;
+        }
+        .hero-body .title {
             color: white;
         }
     }
@@ -25,6 +59,10 @@ html {
         background-color: white;
         padding: 35px 30px;
         border-radius: 15px 15px 0 0;
+
+        &.contains-list {
+            max-height: calc(100% - 290px);
+        }
     }
     fieldset {
         margin-bottom: 20px;
@@ -34,6 +72,40 @@ html {
 
         .content > p {
             margin-bottom: 5px;
+        }
+    }
+
+    #invoices-list-container {
+        border-top: 1px solid #eaeaea;
+        padding-top: 20px;
+        max-height: calc(100% - 160px);
+
+        #invoices-list {
+            max-height: 100%;
+            overflow-y: auto;
+
+            .invoice-list-item:not([id]) > .tile {
+                padding: 0;
+                overflow: hidden;
+
+                .invoice-number {
+                    color: white;
+                    background-color: $primary;
+                    padding: 15px 20px;
+                }
+                .invoice-body {
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                    font-size: 13px;
+                    padding: 10px 15px;
+                }
+                .invoice-amount {
+                    padding: 15px 20px;
+                }
+            }
+            .invoice-list-item:not(:last-child) {
+                margin-bottom: 10px;
+            }
         }
     }
         
@@ -74,6 +146,23 @@ html {
 
     .pageloader {
         background: $secondary;
+
+        &.inline-loader {
+            display: none;
+            position: relative;
+            margin-top: 70px;
+            background: transparent;
+
+            &.is-active {
+                display: block;
+            }
+            &::after {
+                border: 0 solid #363636;
+            }
+            .title {
+                color: #363636;
+            }
+        }
     }
   }
 }

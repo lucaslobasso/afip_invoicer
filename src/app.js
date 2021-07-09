@@ -15,7 +15,7 @@ const createWindow = async () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 500,
-    height: 800,
+    height: 900,
     icon: path.join(app.getAppPath(), "assets/icon.png"),
     webPreferences: {
       nodeIntegration: true,
@@ -36,7 +36,7 @@ const createWindow = async () => {
   });
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished

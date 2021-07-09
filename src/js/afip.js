@@ -2,7 +2,7 @@ const Afip          = require('@afipsdk/afip.js');
 const activeWindow  = electron.getCurrentWindow();
 const tempPath      = electron.app.getPath("temp");
 const invoiceType   = 11 // Factura C
-let afip, lastInvoiceDate;
+let afip, lastInvoiceNumber, lastInvoiceDate;
 
 async function initAfip() {
     afip = await getAfipUser();
@@ -20,7 +20,7 @@ async function initAfip() {
         pointOfSaleError();
     }
 
-    await updateLastInvoiceDate();
+    await updateLastInvoice();
     return afip;
 }
 
@@ -43,20 +43,20 @@ async function getPointsOfSale() {
         let input  = $("#pointOfSale"),
             points = await afip.ElectronicBilling.getSalesPoints();
             
-        if (points && points.length) {
+        if (input.length && points && points.length) {
             points.forEach(point => {
                 input.append($("<option />", { html: `${point.Nro}: ${point.EmisionTipo}`, value: point.Nro }));
             });
-
+    
             if (points.length == 1) {
                 input.attr("disabled", "");
             }
             else {
                 input.removeAttr("disabled");
             }
-
-            return true;
         }
+
+        return points && points.length;
     } 
     catch (e) {
         errorMessage(e);
@@ -87,6 +87,29 @@ async function getInvoiceInfo(invoice) {
     }
 }
 
+async function getInvoicesListInfo(dateFrom, dateTo) {
+    let invoicesList = [];
+
+    try {
+        let POS      = $("#pointOfSale").val(),
+            invoices = new Uint8Array([...Array(lastInvoiceNumber + 1).keys()]).subarray(1),
+            first    = await binaryInvoiceDateSearch(invoices, dateFrom),
+            last     = await binaryInvoiceDateSearch(invoices, dateTo),
+            inRange  = invoices.subarray(first, last),
+            data;
+            
+        for (let i = 0; i < inRange.length; i++) {
+            data = await afip.ElectronicBilling.getVoucherInfo(inRange[i], POS, invoiceType);
+            invoicesList.push(data);
+        }
+    } 
+    catch (e) {
+        errorMessage(e);
+    }
+    
+    return invoicesList;
+}
+
 async function getLastInvoiceDate() {
     try {
         let invoice = await getLastInvoice(),
@@ -100,13 +123,14 @@ async function getLastInvoiceDate() {
     }
 }
 
-async function generateInvoice() {
+async function generateAfipInvoice() {
     if (!await isServerOnline()) {
         errorMessage("El servidor de la AFIP no se encuentra disponible. Intente nuevamente más tarde.");
     }
 
     try {
-        let invoiceData = await getInvoiceData();
+        let lastInvoice = await getLastInvoice(),
+            invoiceData = await getInvoiceData(lastInvoice);
         
         await afip.ElectronicBilling.createVoucher(invoiceData).then((data, err) => {
             if (err) {
@@ -114,22 +138,21 @@ async function generateInvoice() {
                 return;
             }
             
-            invoiceGenerated(data['CAE'], invoiceData.CbteFch);
+            invoiceGenerated(lastInvoice + 1, invoiceData.CbteFch);
         });
     } catch (e) {
         errorMessage(e);
     }
 }
 
-async function getInvoiceData() {
+async function getInvoiceData(lastInvoice) {
     let concept     = $("#concept").val(),
         pointOfSale = $("#pointOfSale").val(),
         date        = $("#date").val(),
         amount      = $("#amount").val(),
         dateParsed  = serializeInvoiceDate(date),
         serviceDate = parseInt(concept) > 1 ? dateParsed : null,
-        lastVoucher = await getLastInvoice(),
-        currVoucher = lastVoucher + 1,
+        currVoucher = lastInvoice + 1,
         invoiceData = {
             'CantReg' 		: 1,            // Cantidad de comprobantes a registrar
             'PtoVta' 		: pointOfSale,  // Punto de venta
@@ -171,19 +194,32 @@ function parseInvoiceDate(date) {
     return new Date(year, month - 1, day);
 }
 
-function invoiceGenerated(cae, invoiceDate) {
+function parseInvoiceConcept(concept) {
+    switch (concept) {
+        case 1:
+            return "Productos";
+        case 2:
+            return "Servicios";
+        case 3:
+            return "Productos y Servicios";
+        default:
+            return "Error al parsear el concepto";
+    }
+}
+
+function invoiceGenerated(invoiceNumber, invoiceDate) {
     let btn    = $("#generateInvoice"),
         fields = $("#invoice-fields");
 
     $("#amount").val("");
-    updateLastInvoiceDate(invoiceDate);
+    updateLastInvoice(invoiceNumber, invoiceDate);
     submitSpinner(btn, fields, false);
-    successMessage(`Factura generada correctamente. CAE: ${cae}.`);
+    successMessage(`Comprobante nº ${invoiceNumber} generado correctamente.`);
 }
 
-async function updateLastInvoiceDate(date) {
+async function updateLastInvoice(number, date) {
+    lastInvoiceNumber = number ? parseInt(number.toString()) : await getLastInvoice();
     lastInvoiceDate = date ? parseInvoiceDate(date.toString()) : await getLastInvoiceDate();
-    updateDatePicker();
 }
 
 async function isServerOnline() {
@@ -216,4 +252,23 @@ function connectionError() {
 
 function pointOfSaleError() {
     activeWindow.loadFile(path.join(__dirname, 'error/point_of_sale.html'));
+}
+
+async function binaryInvoiceDateSearch(list, date) {
+    let from = 0, to = lastInvoiceNumber - 1, m, i, d;
+
+    while (from  <= to) {
+        m = parseInt(from + (to - from) / 2);
+        i = await getInvoiceInfo(list[m]);
+        d = parseInvoiceDate(i.CbteFch);
+
+        if (d < date) {
+            from = m + 1;
+        } 
+        else {
+            to = m - 1;
+        }
+    }
+
+    return to + 1;
 }

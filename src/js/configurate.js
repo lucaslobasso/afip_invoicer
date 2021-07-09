@@ -3,21 +3,18 @@ const activeWindow  = electron.getCurrentWindow();
 
 $(document).ready(function() {
     loadCuit();
-    bindSubmitButton();
     bindUploadSection();
 });
 
-function bindSubmitButton() {
-    let btn    = $("#submitConfig"),
+async function submitConfiguration(elem) {
+    let btn    = $(elem),
         fields = $("#configurate-fields");
 
-    btn.on("click", async function () {
-        if (!submitSpinner(btn, fields) && await validateForm()) {
-            activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
-        }
-        
-        submitSpinner(btn, fields, false);
-    });
+    if (!submitSpinner(btn, fields) && await validateForm()) {
+        activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
+    }
+    
+    submitSpinner(btn, fields, false);
 }
 
 function bindUploadSection() {

@@ -1,31 +1,22 @@
 const activeWindow  = electron.getCurrentWindow();
 const viewsPath     = __dirname.replace("/error", "");
 
-$(document).ready(function() {
-    bindReConnectButton();
-    bindReConfigButton();
-});
+function retryConnection(elem) {
+    let btn = $(elem);
 
-function bindReConnectButton() {
-    let btn = $("#retryConnection");
-
-    btn.on("click", function () {
-        if (!submitSpinner(btn)) {
-            activeWindow.loadFile(path.join(viewsPath, 'generate_invoice.html'));
-        }
-        
-        submitSpinner(btn, false);
-    });
+    if (!submitSpinner(btn)) {
+        activeWindow.loadFile(path.join(viewsPath, 'generate_invoice.html'));
+    }
+    
+    submitSpinner(btn, false);
 }
 
-function bindReConfigButton() {
-    let btn = $("#retryConfiguration");
+function retryConfiguration(elem) {
+    let btn = $(elem);
 
-    btn.on("click", function () {
-        if (!submitSpinner(btn)) {
-            activeWindow.loadFile(path.join(viewsPath, 'configurate.html'));
-        }
-        
-        submitSpinner(btn, false);
-    });
+    if (!submitSpinner(btn)) {
+        activeWindow.loadFile(path.join(viewsPath, 'configurate.html'));
+    }
+    
+    submitSpinner(btn, false);
 }

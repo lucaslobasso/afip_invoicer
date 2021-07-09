@@ -4,27 +4,22 @@ $(document).ready(async function() {
         fields = $("#invoice-fields");
 
     submitSpinner(btn, fields);
-
-    await initAfip();
-
-    bindInvoiceButton();
+    await initAfipConnection();
     bindDatePicker();
     updateDatePicker().setDate(new Date(Date.now()));
     submitSpinner(btn, fields, false);
-    $(".pageloader").removeClass("is-active");
 });
 
-function bindInvoiceButton() {
-    let btn    = $("#generateInvoice"),
+async function generateInvoice(elem) {
+    let btn    = $(elem),
         fields = $("#invoice-fields");
 
-    btn.on("click", async function() {
-        if (!submitSpinner(btn, fields) && validateForm()) {
-            await generateInvoice();
-        }
+    if (!submitSpinner(btn, fields) && validateForm()) {
+        await generateAfipInvoice();
+        updateDatePicker();
+    }
 
-        submitSpinner(btn, fields, false);
-    });
+    submitSpinner(btn, fields, false);
 }
 
 function bindDatePicker() {
@@ -41,7 +36,7 @@ function updateDatePicker() {
     let concept   = $("#concept").val(),
         date      = $("#date"),
         oldPicker = $(".datepicker"),
-        minDate   = new Date(new Date().setDate(concept > 1 ? new Date().getDate() - 10 : new Date().getDate() - 5));
+        minDate   = addDate(new Date(), concept > 1 ? -10 : -5);
 
     if (oldPicker.length) {
         oldPicker.remove();
@@ -56,14 +51,6 @@ function updateDatePicker() {
 
 function validateForm() {
     return validateDatePicker() && validateAmount();
-}
-
-function validateDatePicker() {
-    if ($(".datepicker").length && $(".datepicker").length < 2 && !$(".datepicker").hasClass("active")) {
-        return true;
-    }
-
-    return false;
 }
 
 function validateAmount() {

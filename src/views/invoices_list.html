@@ -16,7 +16,7 @@
 
     <script defer src="../js/main.js"></script>
     <script defer src="../js/afip.js"></script>
-    <script defer src="../js/generate_invoice.js"></script>
+    <script defer src="../js/invoices_list.js"></script>
   </head>
   <body class="is-flex is-flex-direction-column">
     <section id="app-header" class="hero is-primary">
@@ -35,8 +35,8 @@
                   <div class="button is-primary is-rounded" onclick="initAfipConnection();">
                     <i class="fas fa-sync"></i>
                   </div>
-                  <div class="button is-primary is-rounded" onclick="loadInvoicesListView(this);">
-                    <i class="fas fa-list"></i>
+                  <div class="button is-primary is-rounded" onclick="loadGenerateInvoiceView(this);">
+                    <i class="fas fa-file-invoice-dollar"></i>
                   </div>
                   <div class="button is-light is-rounded" onclick="loadConfigurationView(this);">
                     <i class="fas fa-cog"></i>
@@ -48,20 +48,23 @@
         </nav>
       </div>
       <div class="hero-body">
-        <p class="title has-text-centered mb-0">Generación</p>
-        <p class="title has-text-centered">de comprobantes</p>
+        <p class="title has-text-centered">Consulta de comprobantes</p>
       </div>
     </section>
-    <section id="app-body" class="section is-flex is-flex-direction-column is-flex-grow-1">
-        <fieldset id="invoice-fields" class="is-flex-grow-1">
+    <section id="app-body" class="section is-flex is-flex-direction-column is-flex-grow-1 contains-list">
+        <fieldset id="filter-fields">
           <div class="field">
-            <label class="label">Concepto</label>
-            <div class="select">
-              <select id="concept" data-val="2">
-                <option value="1">Productos</option>
-                <option value="2">Servicios</option>
-                <option value="3">Productos y Servicios</option>
-              </select>
+            <label class="label">Fecha</label>
+            <div id="range" class="field has-addons">
+              <div class="control is-expanded">
+                <input name="start" class="input datepicker-input" type="text">
+              </div>
+              <div class="control">
+                <a class="button is-static">a</a>
+              </div>
+              <div class="control is-expanded">
+                <input name="end" class="input datepicker-input" type="text">
+              </div>
             </div>
           </div>
           <div class="field is-grouped">
@@ -71,25 +74,35 @@
                 <select id="pointOfSale"></select>
               </div>
             </div>
-            <div class="field">
-              <label class="label">Fecha</label>
-              <div class="control">
-                <input id="date" class="input" type="text">
-              </div>
-              <p class="help is-danger is-hidden">Fecha inválida.</p>
+            <div class="field is-flex is-align-items-flex-end">
+              <button id="searchInvoices" class="button is-info is-fullwidth" onclick="searchInvoices(this);" type="button">
+                <i class="fas fa-search"></i>
+              </button>
             </div>
-          </div>
-          <div class="field">
-            <label class="label">Monto</label>
-            <div class="control">
-                <input id="amount" class="input" type="number">
-            </div>
-            <p class="help is-danger is-hidden">Debe ser mayor a 0 y menor a 7500.</p>
           </div>
         </fieldset>
-        <button id="generateInvoice" class="button is-medium is-success is-loading is-fullwidth" onclick="generateInvoice(this);" type="button">Generar</button>
+        <div id="invoices-list-container" class="is-flex-grow-1">
+          <ul id="invoices-list">
+            <li id="invoice-list-item-template" class="invoice-list-item is-hidden">
+              <div class="tile is-child notification is-flex">
+                <span class="invoice-number"></span>
+                <span class="invoice-body is-flex is-flex-direction-column">
+                  <span class="invoice-date is-flex is-align-items-center"></span>
+                  <span class="invoice-concept is-flex is-align-items-center"></span>
+                </span>
+                <span class="invoice-amount"></span>
+              </div>
+            </li>
+            <li id="invoice-list-no-items" class="invoice-list-item is-hidden">
+              <div class="tile is-child notification is-warning is-light">
+                No se encontraron comprobantes.
+              </div>
+            </li>
+          </ul>
+          <div id="invoices-loader" class="pageloader inline-loader is-bottom-to-top"><span class="title">Buscando...</span></div>
+        </div>
     </section>
-    <div id="page-loader" class="pageloader is-bottom-to-top is-active"><span class="title">Conectando con la AFIP...</span></div>
+    <div id="page-loader" class="pageloader is-bottom-to-top is-active"></div>
     <footer id="app-footer" class="footer">
       <div class="content has-text-centered">
         <p><strong>Croessant</strong> hecho por Lucas Lobasso.</p>

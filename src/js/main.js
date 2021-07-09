@@ -14,6 +14,31 @@ bulmaToast.setDefaults({
     animate: { in: 'fadeIn', out: 'fadeOut' }
 });
 
+async function initAfipConnection() {
+    let spinner = $("#page-loader");
+
+    spinner.addClass("is-active");
+    await initAfip();
+    spinner.removeClass("is-active");
+}
+
+function loadPointsOfSale() {
+    let input = $("#pointOfSale");
+
+    if (input.length && pointsOfSale && pointsOfSale.length) {
+        pointsOfSale.forEach(point => {
+            input.append($("<option />", { html: `${point.Nro}: ${point.EmisionTipo}`, value: point.Nro }));
+        });
+
+        if (pointsOfSale.length == 1) {
+            input.attr("disabled", "");
+        }
+        else {
+            input.removeAttr("disabled");
+        }
+    }
+}
+
 function successMessage(msg) {
     bulmaToast.toast({ message: msg.toString(), type: 'is-success' });
 }
@@ -30,6 +55,7 @@ function infoMessage(msg) {
 function submitSpinner(btn, fields, loading = true) {
     if (loading) {
         if (btn.hasClass("is-loading")) {
+            fields.attr("disabled", "");
             return true;
         }
 
@@ -46,6 +72,36 @@ function submitSpinner(btn, fields, loading = true) {
     }
 
     return false;
+}
+
+function loadInvoicesListView(elem) {
+    let btn = $(elem);
+
+    if (!submitSpinner(btn)) {
+        activeWindow.loadFile(path.join(__dirname, 'invoices_list.html'));
+    }
+    
+    submitSpinner(btn, false);
+}
+
+function loadGenerateInvoiceView(elem) {
+    let btn = $(elem);
+
+    if (!submitSpinner(btn)) {
+        activeWindow.loadFile(path.join(__dirname, 'generate_invoice.html'));
+    }
+    
+    submitSpinner(btn, false);
+}
+
+function loadConfigurationView(elem) {
+    let btn = $(elem);
+
+    if (!submitSpinner(btn)) {
+        activeWindow.loadFile(path.join(__dirname, 'configurate.html'));
+    }
+    
+    submitSpinner(btn, false);
 }
 
 function invalidInput(input, invalid = true) {
@@ -71,10 +127,30 @@ function generateDatePicker(elem, minDate) {
     return new Datepicker(elem[0], {
         autohide        : true,
         todayHighlight  : true,
+        orientation     : "bottom",
         minDate         : minDate,
-        maxDate         : new Date(new Date().setDate(concept > 1 ? new Date().getDate() + 10 : new Date().getDate() + 5)),
+        maxDate         : addDate(new Date(), concept > 1 ? 10 : 5),
         language        : "es"
     });
+}
+
+function generateDateRangePicker(elem) {
+    return new DateRangePicker(elem[0], {
+        autohide        : true,
+        todayHighlight  : true,
+        orientation     : "bottom",
+        minDate         : addDate(new Date(), 0, -2),
+        maxDate         : addDate(new Date(), 0, 2),
+        language        : "es"
+    });
+}
+
+function validateDatePicker(amount = 1) {
+    if ($(".datepicker").length && $(".datepicker").length < (amount + 1) && !$(".datepicker").hasClass("active")) {
+        return true;
+    }
+
+    return false;
 }
 
 function getDate(date) {
@@ -85,7 +161,15 @@ function getDate(date) {
         return parsed;
     } 
     catch (e) {
-        return null;
+        return new Date();
+    }
+}
+
+function addDate(date, days = 0, months = 0) {
+    try {
+        return new Date(date.getFullYear(), date.getMonth() + months, date.getDate() + days);
+    } catch (e) {
+        return new Date();
     }
 }
 
