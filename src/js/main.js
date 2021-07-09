@@ -173,6 +173,10 @@ function addDate(date, days = 0, months = 0) {
     }
 }
 
+function parseAmount(amount) {
+    return (parseFloat(amount)).toLocaleString();
+}
+
 async function getCuit() {
     let cuit;
 

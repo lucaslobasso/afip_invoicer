@@ -50,19 +50,22 @@ async function searchAfipInvoices() {
         list     = $("#invoices-list"),
         template = $("#invoice-list-item-template"),
         noData   = $("#invoice-list-no-items"),
-        items    = $(".invoice-list-item:not([id])");
+        items    = $(".invoice-list-item:not([id])"),
+        total    = $("#invoices-total");
 
     spinner.addClass("is-active");
     noData.addClass("is-hidden");
+    total.addClass("is-hidden");
     items.remove();
     
     if (lastInvoiceNumber > 0) {
         let from = $("[name='start']").val(),
             to   = $("[name='end']").val(),
             invs = await getInvoicesListInfo(getDate(from), addDate(getDate(to), 1)),
-            clone;
+            clone, totalAmount;
 
         if (invs.length) {
+            totalAmount = invs.reduce((a, b) => a + (parseInt(b["ImpTotal"]) || 0), 0);
             invs.forEach(invoice => {
                 clone = template.clone();
                 
@@ -71,9 +74,12 @@ async function searchAfipInvoices() {
                 clone.find(".invoice-number").html(invoice.CbteDesde);
                 clone.find(".invoice-date").html(parseInvoiceDate(invoice.CbteFch).toLocaleDateString());
                 clone.find(".invoice-concept").html(parseInvoiceConcept(invoice.Concepto));
-                clone.find(".invoice-amount").html("$" + invoice.ImpTotal);
+                clone.find(".invoice-amount").html("$" + parseAmount(invoice.ImpTotal));
                 clone.appendTo(list);
             });
+
+            total.removeClass("is-hidden");
+            total.find(".total-amount").html("$" + parseAmount(totalAmount));
         }
         else {
             noData.removeClass("is-hidden");

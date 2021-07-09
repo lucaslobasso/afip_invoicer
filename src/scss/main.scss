@@ -78,7 +78,7 @@ html {
     #invoices-list-container {
         border-top: 1px solid #eaeaea;
         padding-top: 20px;
-        max-height: calc(100% - 160px);
+        max-height: calc(100% - 200px);
 
         #invoices-list {
             max-height: 100%;
@@ -107,6 +107,15 @@ html {
                 margin-bottom: 10px;
             }
         }
+    }
+    #invoices-total {
+        position: absolute;
+        bottom: 115px;
+        left: 0;
+        width: 100%;
+        color: white;
+        background-color: $secondary;
+        padding: 10px 20px;
     }
         
     .select {

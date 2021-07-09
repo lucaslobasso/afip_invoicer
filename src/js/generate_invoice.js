@@ -58,9 +58,9 @@ function validateAmount() {
 
     try {
         let value  = input.val(),
-            amount = parseInt(value);
+            amount = parseFloat(value);
 
-        if (amount > 0 && amount < 7500) {
+        if (amount > 0 && amount < 7600) {
             return true;
         }
     } 
