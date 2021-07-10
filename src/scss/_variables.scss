@@ -9,11 +9,19 @@ $info: $secondary;
 $danger: #d84242;
 $danger-dark: #a93838;
 
+$family-primary: "Lato", sans-serif;
 $family-sans-serif: "Lato", sans-serif;
 $body-background-color: $primary;
 $input-border-color: #ececec;
 $link: $secondary;
 $link-hover: $primary;
 
+$tooltip-font-family: "Lato", sans-serif;
+$tooltip-font-size: 13px;
+$tooltip-background-color: #7a7a7a;
+$tooltip-background-opacity: 1;
+$tooltip-radius: 6px;
+
 @import "../../node_modules/bulma/bulma.sass";
 @import "../../node_modules/bulma-pageloader/src/sass/index.sass";
+@import "../../node_modules/@creativebulma/bulma-tooltip/src/sass/index.sass"

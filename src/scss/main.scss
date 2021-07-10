@@ -2,7 +2,7 @@
 
 html {
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
 
   body {
     height: 100%;
@@ -172,6 +172,12 @@ html {
                 color: #363636;
             }
         }
+    }
+
+    [data-tooltip]:not(.is-loading).has-tooltip-primary:before, 
+    [data-tooltip]:not(.is-disabled).has-tooltip-primary:before, 
+    [data-tooltip]:not([disabled]).has-tooltip-primary:before {
+        background-color: #1d2e4e;
     }
   }
 }

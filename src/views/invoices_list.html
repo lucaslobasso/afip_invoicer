@@ -32,13 +32,13 @@
             <div class="navbar-end">
               <div class="navbar-item">
                 <div class="buttons are-small">
-                  <div class="button is-primary is-rounded" onclick="initAfipConnection();">
+                  <div class="button is-primary is-rounded has-tooltip-primary has-tooltip-left" onclick="initAfipConnection();" data-tooltip="Reconectar">
                     <i class="fas fa-sync"></i>
                   </div>
-                  <div class="button is-primary is-rounded" onclick="loadGenerateInvoiceView(this);">
+                  <div class="button is-primary is-rounded has-tooltip-primary has-tooltip-left" onclick="loadGenerateInvoiceView(this);" data-tooltip="Generación de comprobantes">
                     <i class="fas fa-file-invoice-dollar"></i>
                   </div>
-                  <div class="button is-light is-rounded" onclick="loadConfigurationView(this);">
+                  <div class="button is-light is-rounded has-tooltip-primary has-tooltip-left" onclick="loadConfigurationView(this);" data-tooltip="Configuración">
                     <i class="fas fa-cog"></i>
                   </div>
                 </div>
@@ -75,7 +75,7 @@
               </div>
             </div>
             <div class="field is-flex is-align-items-flex-end">
-              <button id="searchInvoices" class="button is-info is-fullwidth" onclick="searchInvoices(this);" type="button">
+              <button id="searchInvoices" class="button is-info is-fullwidth" onclick="searchInvoices(this);" data-tooltip="Buscar" type="button">
                 <i class="fas fa-search"></i>
               </button>
             </div>
